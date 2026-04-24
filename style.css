@@ -1,78 +1,13 @@
-body{
-  margin:0;
-  font-family:'Inter',sans-serif;
-  display:flex;
-  background:#f5f6fa;
-}
-
-.sidebar{
-  width:220px;
-  background:white;
-  padding:15px;
-  height:100vh;
-  box-shadow:2px 0 10px rgba(0,0,0,0.05);
-}
-
-.logo{
-  width:80px;
-  display: block;
-  margin-bottom: 10px;
-  border-radius: 10px;
-}
-
-.menu-item{
-  padding:10px;
-  margin-top:10px;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-.active{
-  background:#6C9EFF;
-  color:white;
-}
-
-.main{
-  flex:1;
-  padding:20px;
-}
-
-.tarea{
-  display:flex;
-  justify-content:space-between;
-  background:white;
-  padding:15px;
-  border-radius:10px;
-  margin-top:10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.btn{
-  padding:10px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight: bold;
-}
-
-.hecho{background:green;color:white;}
-
-.btn-confirmar {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 8px;
-    margin-top: 10px;
-    border-radius: 5px;
-    width: 100%;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-/* Responsivo para celular */
+body{ margin:0; font-family:'Inter',sans-serif; display:flex; background:#f5f6fa; }
+.sidebar{ width:220px; background:white; padding:15px; height:100vh; box-shadow:2px 0 10px rgba(0,0,0,0.05); }
+.logo{ width:80px; border-radius:10px; margin-bottom:10px; }
+.menu-item{ padding:10px; margin-top:10px; border-radius:8px; cursor:pointer; }
+.active{ background:#6C9EFF; color:white; }
+.main{ flex:1; padding:20px; }
+.tarea{ background:white; padding:15px; border-radius:10px; margin-top:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+.btn-confirmar{ background:#28a745; color:white; border:none; padding:10px; border-radius:5px; width:100%; margin-top:10px; font-weight:bold; cursor:pointer; }
 @media (max-width: 600px) {
-    body { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; display: flex; overflow-x: auto; }
-    .sidebar h2 { display: none; }
-    .tarea { flex-direction: column; }
+  body { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; display: flex; overflow-x: auto; position: sticky; top:0; }
+  .sidebar h2 { display:none; }
 }
