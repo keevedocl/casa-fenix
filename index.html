@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Fénix</title>
+
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="sidebar">
+  <img src="logo.png" class="logo">
+  <h2>Casa Fénix</h2>
+
+  <div class="menu">
+    <div class="menu-item active" onclick="cargarVista('hoy', this)">🏠 Hoy</div>
+    <div class="menu-item" onclick="cargarVista('evidencias', this)">📸 Evidencias</div>
+    <div class="menu-item" onclick="cargarVista('faltas', this)">⚠️ Faltas</div>
+    <div class="menu-item" onclick="cargarVista('personas', this)">👥 Personas</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="header">
+    <h1 id="titulo">Hoy</h1>
+    <div id="hora"></div>
+  </div>
+
+  <div id="mainContent"></div>
+</div>
+
+<script src="app.js"></script>
+
+<script>
+setInterval(()=>{
+  document.getElementById("hora").innerText = new Date().toLocaleTimeString();
+},1000);
+</script>
+
+</body>
+</html>
