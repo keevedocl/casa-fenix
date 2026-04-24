@@ -1,13 +1,104 @@
-body{ margin:0; font-family:'Inter',sans-serif; display:flex; background:#f5f6fa; }
-.sidebar{ width:220px; background:white; padding:15px; height:100vh; box-shadow:2px 0 10px rgba(0,0,0,0.05); }
-.logo{ width:80px; border-radius:10px; margin-bottom:10px; }
-.menu-item{ padding:10px; margin-top:10px; border-radius:8px; cursor:pointer; }
-.active{ background:#6C9EFF; color:white; }
-.main{ flex:1; padding:20px; }
-.tarea{ background:white; padding:15px; border-radius:10px; margin-top:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-.btn-confirmar{ background:#28a745; color:white; border:none; padding:10px; border-radius:5px; width:100%; margin-top:10px; font-weight:bold; cursor:pointer; }
+body { 
+    margin: 0; 
+    font-family: 'Inter', sans-serif; 
+    display: flex; 
+    background: #f5f6fa; 
+    min-height: 100vh;
+}
+
+.sidebar { 
+    width: 220px; 
+    background: white; 
+    padding: 15px; 
+    height: 100vh; 
+    box-shadow: 2px 0 10px rgba(0,0,0,0.05); 
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0; /* Evita que el sidebar se achique */
+}
+
+/* Ajustes del Logo */
+.logo { 
+    width: 80px; 
+    height: 80px; /* Definir alto ayuda a que no desaparezca */
+    border-radius: 12px; 
+    margin-bottom: 15px; 
+    object-fit: cover; /* Mantiene la proporción de la imagen */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.menu-item { 
+    padding: 12px; 
+    margin-top: 10px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    transition: 0.3s;
+}
+
+.active { background: #6C9EFF; color: white; }
+
+.main { flex: 1; padding: 20px; }
+
+.tarea { 
+    background: white; 
+    padding: 20px; 
+    border-radius: 12px; 
+    margin-top: 15px; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+}
+
+/* Botón de confirmación mejorado para celular */
+.btn-confirmar { 
+    background: #28a745; 
+    color: white; 
+    border: none; 
+    padding: 14px; 
+    border-radius: 8px; 
+    width: 100%; 
+    margin-top: 12px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    font-size: 16px;
+}
+
+/* --- DISEÑO PARA CELULAR --- */
 @media (max-width: 600px) {
-  body { flex-direction: column; }
-  .sidebar { width: 100%; height: auto; display: flex; overflow-x: auto; position: sticky; top:0; }
-  .sidebar h2 { display:none; }
+    body { flex-direction: column; }
+    
+    .sidebar { 
+        width: 100%; 
+        height: auto; 
+        padding: 10px;
+        flex-direction: row; /* Elementos uno al lado del otro */
+        align-items: center;
+        overflow-x: auto; 
+        position: sticky; 
+        top: 0; 
+        z-index: 1000;
+        box-sizing: border-box;
+    }
+
+    .logo { 
+        width: 50px; /* Más pequeño en celular para que quepa en la barra */
+        height: 50px;
+        margin-bottom: 0; 
+        margin-right: 15px; 
+    }
+
+    .sidebar h2 { display: none; }
+
+    .menu {
+        display: flex;
+        gap: 10px;
+    }
+
+    .menu-item {
+        margin-top: 0;
+        padding: 8px 15px;
+        white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
+    }
+
+    .main { padding: 15px; }
 }
