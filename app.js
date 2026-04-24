@@ -77,7 +77,66 @@ function renderHoy(){
   const cont = document.getElementById("mainContent");
   cont.innerHTML = "";
   const dia = getDia();
-  const tareas = data.tareas[dia];
+  const tareas = data.tareas[dia]
+    // BUSCA ESTA PARTE EN TU RENDERHOY Y REEMPLÁZALA:
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.className = "input-foto"; // Para darle estilo en CSS
+
+    const btnConfirmar = document.createElement("button");
+    btnConfirmar.innerText = "🚀 Subir Foto";
+    btnConfirmar.className = "btn-subir";
+    btnConfirmar.style.display = "none"; // Oculto al inicio
+
+    input.onchange = (e) => {
+      if(e.target.files.length > 0) {
+        btnConfirmar.style.display = "block"; // Aparece cuando eliges foto
+      }
+    };
+
+    btnConfirmar.onclick = () => {
+      const file = input.files[0];
+      const reader = new FileReader();
+      
+      btnConfirmar.innerText = "Enviando... ⏳";
+      btnConfirmar.disabled = true;
+
+      reader.onload = () => {
+        const base64Data = reader.result.split(",")[1];
+        const payload = {
+          tarea: t.nombre,
+          responsable: t.responsable,
+          img: base64Data
+        };
+
+        fetch(GOOGLE_URL, {
+          method: "POST",
+          mode: 'no-cors', 
+          body: JSON.stringify(payload)
+        })
+        .then(() => {
+          alert("✅ ¡Evidencia guardada en Drive!");
+          btnConfirmar.style.display = "none";
+          t.estado = "hecho"; // Marcamos como hecho automáticamente
+          guardar();
+          renderHoy();
+        })
+        .catch(err => {
+          alert("Error: " + err);
+          btnConfirmar.disabled = false;
+          btnConfirmar.innerText = "Reintentar Subida";
+        });
+      };
+      reader.readAsDataURL(file);
+    };
+
+    left.innerHTML = `<b>${t.nombre}</b>`;
+    left.appendChild(select);
+    left.appendChild(estadoDiv);
+    left.appendChild(input);
+    left.appendChild(btnConfirmar); // Añadimos el botón debajo del input;
 
   if(!tareas){
     cont.innerHTML = "<h2>No hay aseo hoy 😎</h2>";
