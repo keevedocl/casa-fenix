@@ -2,40 +2,20 @@ const personas = ["Gonza","Gian","Mario","Alexander","Manu","Mati","JP","Juanito
 const GOOGLE_URL = "https://script.google.com/macros/s/AKfycby-Cg7XVD7v3e4UfSRcKTo7GhaFf5skMnVN2G3qKK-GtxbiAjYGQqy4FPqUYt5vznxP/exec";
 
 const base = {
-  "Lunes":[
-    {nombre:"Living comedor y baño",responsable:"Gonza"},
-    {nombre:"Sala estudio y baños",responsable:"Mati"}
-  ],
-  "Martes":[
-    {nombre:"Living comedor y baño",responsable:"Gian"},
-    {nombre:"Sala estudio y baños",responsable:"JP"}
-  ],
-  "Miércoles":[
-    {nombre:"Living comedor y baño",responsable:"Mario"},
-    {nombre:"Sala estudio y baños",responsable:"Juanito"}
-  ],
-  "Jueves":[
-    {nombre:"Living comedor y baño",responsable:"Alexander"},
-    {nombre:"Sala estudio y baños",responsable:"Fabi"}
-  ],
-  "Viernes":[
-    {nombre:"Living comedor y baño",responsable:"Manu"},
-    {nombre:"Sala estudio y baños",responsable:"Tata"}
-  ]
+  "Lunes":[{"nombre":"Living comedor y baño","responsable":"Gonza"},{"nombre":"Sala estudio y baños","responsable":"Mati"}],
+  "Martes":[{"nombre":"Living comedor y baño","responsable":"Gian"},{"nombre":"Sala estudio y baños","responsable":"JP"}],
+  "Miércoles":[{"nombre":"Living comedor y baño","responsable":"Mario"},{"nombre":"Sala estudio y baños","responsable":"Juanito"}],
+  "Jueves":[{"nombre":"Living comedor y baño","responsable":"Alexander"},{"nombre":"Sala estudio y baños","responsable":"Fabi"}],
+  "Viernes":[{"nombre":"Living comedor y baño","responsable":"Manu"},{"nombre":"Sala estudio y baños","responsable":"Tata"}]
 };
 
-let data = JSON.parse(localStorage.getItem("app")) || {
-  tareas:{},
-  evidencias:[],
-  faltas:{}
-};
+let data = JSON.parse(localStorage.getItem("app")) || { tareas:{}, evidencias:[], faltas:{} };
 
 function guardar(){
   try {
     localStorage.setItem("app", JSON.stringify(data));
   } catch (e) {
-    console.error("Error al guardar: LocalStorage lleno. Limpiando evidencias antiguas...");
-    data.evidencias = data.evidencias.slice(0, 5); // Si se llena, deja solo las últimas 5
+    data.evidencias = data.evidencias.slice(0, 5); 
     localStorage.setItem("app", JSON.stringify(data));
   }
 }
@@ -49,23 +29,17 @@ function initDia(){
   if(!base[dia]) return;
   if(!data.tareas[dia]){
     data.tareas[dia] = base[dia].map(t => ({
-      nombre: t.nombre,
-      responsable: t.responsable,
-      responsableOriginal: t.responsable,
-      estado:"pendiente",
-      aviso:false
+      nombre: t.nombre, responsable: t.responsable, responsableOriginal: t.responsable, estado:"pendiente", aviso:false
     }));
     guardar();
   }
 }
 
-function setActive(el){
-  document.querySelectorAll(".menu-item").forEach(i=>i.classList.remove("active"));
-  el.classList.add("active");
-}
-
 function cargarVista(v, el){
-  if(el) setActive(el);
+  if(el){
+    document.querySelectorAll(".menu-item").forEach(i=>i.classList.remove("active"));
+    el.classList.add("active");
+  }
   if(v==="hoy") renderHoy();
   if(v==="evidencias") renderEvidencias();
   if(v==="faltas") renderFaltas();
@@ -77,66 +51,7 @@ function renderHoy(){
   const cont = document.getElementById("mainContent");
   cont.innerHTML = "";
   const dia = getDia();
-  const tareas = data.tareas[dia]
-    // BUSCA ESTA PARTE EN TU RENDERHOY Y REEMPLÁZALA:
-
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.className = "input-foto"; // Para darle estilo en CSS
-
-    const btnConfirmar = document.createElement("button");
-    btnConfirmar.innerText = "🚀 Subir Foto";
-    btnConfirmar.className = "btn-subir";
-    btnConfirmar.style.display = "none"; // Oculto al inicio
-
-    input.onchange = (e) => {
-      if(e.target.files.length > 0) {
-        btnConfirmar.style.display = "block"; // Aparece cuando eliges foto
-      }
-    };
-
-    btnConfirmar.onclick = () => {
-      const file = input.files[0];
-      const reader = new FileReader();
-      
-      btnConfirmar.innerText = "Enviando... ⏳";
-      btnConfirmar.disabled = true;
-
-      reader.onload = () => {
-        const base64Data = reader.result.split(",")[1];
-        const payload = {
-          tarea: t.nombre,
-          responsable: t.responsable,
-          img: base64Data
-        };
-
-        fetch(GOOGLE_URL, {
-          method: "POST",
-          mode: 'no-cors', 
-          body: JSON.stringify(payload)
-        })
-        .then(() => {
-          alert("✅ ¡Evidencia guardada en Drive!");
-          btnConfirmar.style.display = "none";
-          t.estado = "hecho"; // Marcamos como hecho automáticamente
-          guardar();
-          renderHoy();
-        })
-        .catch(err => {
-          alert("Error: " + err);
-          btnConfirmar.disabled = false;
-          btnConfirmar.innerText = "Reintentar Subida";
-        });
-      };
-      reader.readAsDataURL(file);
-    };
-
-    left.innerHTML = `<b>${t.nombre}</b>`;
-    left.appendChild(select);
-    left.appendChild(estadoDiv);
-    left.appendChild(input);
-    left.appendChild(btnConfirmar); // Añadimos el botón debajo del input;
+  const tareas = data.tareas[dia];
 
   if(!tareas){
     cont.innerHTML = "<h2>No hay aseo hoy 😎</h2>";
@@ -148,102 +63,84 @@ function renderHoy(){
   tareas.forEach(t => {
     const div = document.createElement("div");
     div.className = "tarea";
+
     const left = document.createElement("div");
+    left.innerHTML = `<b>${t.nombre}</b><br>`;
 
     const select = document.createElement("select");
     personas.forEach(p=>{
       const op=document.createElement("option");
-      op.value=p;
-      op.text=p;
+      op.value=p; op.text=p;
       if(p===t.responsable) op.selected=true;
       select.appendChild(op);
     });
+    select.onchange=()=>{ t.responsable = select.value; guardar(); };
 
-    select.onchange=()=>{
-      t.responsable = select.value;
-      guardar();
-    };
-
-    let estado = "⏳ Pendiente";
-    if(t.estado==="hecho") estado="✅ Hecho";
-    if(t.aviso) estado="⚠ Avisó retraso";
-
+    let estado = t.estado === "hecho" ? "✅ Hecho" : (t.aviso ? "⚠ Avisó retraso" : "⏳ Pendiente");
     if(hora>=16 && t.estado==="pendiente" && !t.aviso){
-      estado="❌ Falta";
-      t.estado="falta";
-      if(!data.faltas[t.responsable]) data.faltas[t.responsable]=0;
-      data.faltas[t.responsable]++;
-      guardar();
+        estado="❌ Falta"; t.estado="falta";
+        if(!data.faltas[t.responsable]) data.faltas[t.responsable]=0;
+        data.faltas[t.responsable]++; guardar();
     }
 
-    const estadoDiv=document.createElement("div");
+    const estadoDiv = document.createElement("div");
     estadoDiv.className="estado";
     estadoDiv.innerText=estado;
 
-    const input=document.createElement("input");
-    input.type="file";
-    input.accept="image/*";
+    // SECCIÓN DE FOTO CON CONFIRMACIÓN
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.className = "input-foto";
 
-    input.onchange=(e)=>{
-      const file = e.target.files[0];
+    const btnConfirmar = document.createElement("button");
+    btnConfirmar.innerText = "🚀 Confirmar Subida";
+    btnConfirmar.className = "btn-subir";
+    btnConfirmar.style.display = "none";
+
+    input.onchange = (e) => {
+      if(e.target.files.length > 0) btnConfirmar.style.display = "block";
+    };
+
+    btnConfirmar.onclick = () => {
+      const file = input.files[0];
       const reader = new FileReader();
-      
-      reader.onload=()=>{
-        const base64Data = reader.result.split(",")[1];
-        const payload = {
-          tarea: t.nombre,
-          responsable: t.responsable,
-          img: base64Data
-        };
+      btnConfirmar.innerText = "Enviando... ⏳";
+      btnConfirmar.disabled = true;
 
-        // ENVIAR A GOOGLE
+      reader.onload = () => {
+        const base64Data = reader.result.split(",")[1];
         fetch(GOOGLE_URL, {
           method: "POST",
-          mode: 'no-cors', 
-          body: JSON.stringify(payload)
-        })
-        .then(() => alert("📸 ¡Enviado a Google Sheets y Drive!"))
-        .catch(err => alert("Error de conexión: " + err));
-
-        // GUARDAR LOCAL (Solo datos ligeros, NO la imagen completa para evitar el error de cuota)
-        data.evidencias.unshift({
-          tarea: t.nombre,
-          responsableOriginal: t.responsableOriginal,
-          responsableActual: t.responsable,
-          img: "https://via.placeholder.com/120?text=Subida+a+Drive", 
-          fecha: new Date().toLocaleString()
+          mode: 'no-cors',
+          body: JSON.stringify({ tarea: t.nombre, responsable: t.responsable, img: base64Data })
+        }).then(() => {
+          alert("✅ ¡Guardado en Drive!");
+          t.estado = "hecho";
+          data.evidencias.unshift({
+            tarea: t.nombre, responsableActual: t.responsable,
+            img: "https://via.placeholder.com/120?text=En+Drive",
+            fecha: new Date().toLocaleString()
+          });
+          guardar();
+          renderHoy();
         });
-        guardar();
       };
       reader.readAsDataURL(file);
     };
 
-    left.innerHTML="<b>"+t.nombre+"</b><br>";
     left.appendChild(select);
     left.appendChild(estadoDiv);
     left.appendChild(input);
+    left.appendChild(btnConfirmar);
 
-    const right=document.createElement("div");
-    if(hora<16){
-      const btnH=document.createElement("button");
-      btnH.innerText="✔ Hecho";
-      btnH.className="btn hecho";
-      btnH.onclick=()=>{
-        t.estado="hecho";
-        guardar();
-        renderHoy();
-      };
-
-      const btnA=document.createElement("button");
-      btnA.innerText="⚠ Avisar";
-      btnA.className="btn aviso";
-      btnA.onclick=()=>{
-        t.aviso=true;
-        guardar();
-        renderHoy();
-      };
-      right.appendChild(btnH);
-      right.appendChild(btnA);
+    const right = document.createElement("div");
+    right.className = "botones-derecha";
+    if(t.estado !== "hecho"){
+        const btnH = document.createElement("button");
+        btnH.innerText = "✔ Hecho"; btnH.className = "btn hecho";
+        btnH.onclick = () => { t.estado="hecho"; guardar(); renderHoy(); };
+        right.appendChild(btnH);
     }
 
     div.appendChild(left);
@@ -252,23 +149,20 @@ function renderHoy(){
   });
 }
 
+// Las funciones renderEvidencias, renderFaltas y renderPersonas se mantienen igual...
 function renderEvidencias(){
   const cont = document.getElementById("mainContent");
-  cont.innerHTML = "<h2>📸 Registro de Evidencias</h2>";
+  cont.innerHTML = "<h2>📸 Registro</h2>";
   data.evidencias.forEach(e=>{
     const div = document.createElement("div");
     div.className="card";
-    const texto = e.responsableOriginal === e.responsableActual
-      ? e.responsableActual
-      : e.responsableOriginal + " → " + e.responsableActual;
-    div.innerHTML=`<img src="${e.img}" width="120"><br><b>${e.tarea}</b><br>${texto}<br><small>${e.fecha}</small>`;
+    div.innerHTML=`<img src="${e.img}" width="80"><br><b>${e.tarea}</b><br>${e.responsableActual}<br><small>${e.fecha}</small>`;
     cont.appendChild(div);
   });
 }
-
 function renderFaltas(){
   const cont = document.getElementById("mainContent");
-  cont.innerHTML="<h2>⚠️ Faltas Acumuladas</h2>";
+  cont.innerHTML="<h2>⚠️ Faltas</h2>";
   for(let p in data.faltas){
     const div=document.createElement("div");
     div.className="card";
@@ -276,7 +170,6 @@ function renderFaltas(){
     cont.appendChild(div);
   }
 }
-
 function renderPersonas(){
   const cont = document.getElementById("mainContent");
   cont.innerHTML="<h2>👥 Integrantes</h2>";
@@ -287,5 +180,4 @@ function renderPersonas(){
     cont.appendChild(div);
   });
 }
-
 cargarVista("hoy");
