@@ -77,3 +77,35 @@ body{
 img{
   border-radius:8px;
 }
+/* Esto hace que la app ocupe el ancho del celular */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 10px;
+    background-color: #f4f4f9;
+}
+
+.tarea {
+    background: white;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column; /* Apila elementos en vertical para celular */
+    gap: 10px;
+}
+
+/* Botón de subir archivo con estilo */
+input[type="file"] {
+    padding: 10px;
+    background: #e1e1e1;
+    border-radius: 5px;
+    width: 100%;
+}
+
+button {
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+}
