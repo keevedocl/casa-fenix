@@ -237,3 +237,17 @@ button {
 input[type="file"] {
   font-size: 14px;
 }
+/* 🔥 FIX IMÁGENES (CLAVE PARA TU BUG) */
+.preview-img {
+  display: none;
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+
+/* 🔥 evita zoom raro en móvil */
+input[type="file"] {
+  max-width: 100%;
+}
