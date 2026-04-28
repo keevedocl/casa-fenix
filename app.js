@@ -15,39 +15,18 @@ const base = {
   "Viernes": [{ nombre: "Living comedor y baño", responsable: "Manu" }, { nombre: "Sala estudio y baños", responsable: "Tata" }]
 };
 
-let data = JSON.parse(localStorage.getItem("app")) || { tareas: {}, evidencias: [], insumos: [] };
+let data = JSON.parse(localStorage.getItem("app")) || { tareas: {}, evidencias: [] };
 
 function guardar() {
   localStorage.setItem("app", JSON.stringify(data));
 }
 
-/* =========================
-   PROGRESO
-========================= */
-function actualizarProgreso(dia) {
-  const tareas = data.tareas[dia];
-  if (!tareas) return;
-
-  const total = tareas.length;
-  const hechas = tareas.filter(t => t.estado === "hecho").length;
-  const porcentaje = Math.round((hechas / total) * 100);
-
-  document.getElementById("progresoTexto").innerText =
-    `${porcentaje}% completado (${hechas}/${total})`;
-
-  document.getElementById("barraProgreso").style.width = porcentaje + "%";
-}
-
-/* =========================
-   MENU
-========================= */
+/* MENU */
 function toggleMenu() {
   document.getElementById("sidebar").classList.toggle("open");
 }
 
-/* =========================
-   DARK MODE
-========================= */
+/* DARK MODE */
 function toggleDarkMode() {
   const html = document.documentElement;
   const isDark = html.getAttribute("data-theme") === "dark";
@@ -55,24 +34,14 @@ function toggleDarkMode() {
   if (isDark) {
     html.removeAttribute("data-theme");
     localStorage.setItem("theme", "light");
-    toast("☀️ Modo claro");
   } else {
     html.setAttribute("data-theme", "dark");
     localStorage.setItem("theme", "dark");
-    toast("🌙 Modo oscuro");
   }
 }
 
-/* =========================
-   TOAST
-========================= */
-function toast(msg, tipo = "ok") {
-  const colores = {
-    ok: "#2ecc71",
-    error: "#e74c3c",
-    warn: "#f39c12"
-  };
-
+/* TOAST */
+function toast(msg, color = "#2ecc71") {
   const t = document.createElement("div");
   t.innerText = msg;
   t.style = `
@@ -80,21 +49,17 @@ function toast(msg, tipo = "ok") {
     bottom:30px;
     left:50%;
     transform:translateX(-50%);
-    background:${colores[tipo]};
+    background:${color};
     color:white;
-    padding:14px 20px;
-    border-radius:12px;
-    z-index:999;
-    font-weight:bold;
+    padding:12px 18px;
+    border-radius:10px;
+    z-index:9999;
   `;
-
   document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
+  setTimeout(() => t.remove(), 2500);
 }
 
-/* =========================
-   COMPRESION IMG
-========================= */
+/* COMPRESION */
 async function comprimirImagen(file) {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -118,9 +83,7 @@ async function comprimirImagen(file) {
   });
 }
 
-/* =========================
-   PREVIEW CONTROLADO
-========================= */
+/* PREVIEW */
 function previewImagen(input, id) {
   const file = input.files[0];
   if (!file) return;
@@ -130,17 +93,11 @@ function previewImagen(input, id) {
     const img = document.getElementById("preview_" + id);
     img.src = e.target.result;
     img.style.display = "block";
-
-    // 🔥 CONTROL TAMAÑO (evita zoom loco)
-    img.style.maxHeight = "250px";
-    img.style.objectFit = "cover";
   };
   reader.readAsDataURL(file);
 }
 
-/* =========================
-   HOY
-========================= */
+/* HOY */
 function renderHoy() {
   const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const diaNombre = dias[new Date().getDay()];
@@ -159,15 +116,6 @@ function renderHoy() {
     data.tareas[diaNombre] = base[diaNombre].map(t => ({ ...t, estado: "pendiente" }));
     guardar();
   }
-
-  const pendientes = data.tareas[diaNombre].filter(t => t.estado !== "hecho").length;
-
-  const alerta = document.createElement("div");
-  alerta.className = "card";
-  alerta.innerHTML = pendientes > 0
-    ? `⚠️ Te faltan ${pendientes} tareas`
-    : `✅ Todo listo`;
-  cont.appendChild(alerta);
 
   data.tareas[diaNombre].forEach((t, i) => {
     const div = document.createElement("div");
@@ -204,7 +152,7 @@ function renderHoy() {
 
     btn.onclick = async () => {
       const file = fileInput.files[0];
-      if (!file) return toast("Sube una imagen", "error");
+      if (!file) return toast("Sube una imagen", "#e74c3c");
 
       btn.innerText = "⏳ Subiendo...";
       btn.disabled = true;
@@ -212,15 +160,15 @@ function renderHoy() {
       try {
         const img64 = await comprimirImagen(file);
 
-        fetch(GOOGLE_URL, {
+        const fd = new FormData();
+        fd.append("dia", diaNombre);
+        fd.append("tarea", t.nombre);
+        fd.append("responsable", t.responsable);
+        fd.append("img", img64);
+
+        await fetch(GOOGLE_URL, {
           method: "POST",
-          mode: "no-cors",
-          body: JSON.stringify({
-            dia: diaNombre,
-            tarea: t.nombre,
-            responsable: t.responsable,
-            img: img64
-          })
+          body: fd
         });
 
         t.estado = "hecho";
@@ -233,37 +181,34 @@ function renderHoy() {
         });
 
         guardar();
-        actualizarProgreso(diaNombre);
 
         btn.innerText = "✅ Enviado";
         toast("Subido 🚀");
 
-        // 🔥 CLAVE: permitir subir otra
+        // RESET
         fileInput.value = "";
-        document.getElementById("preview_" + i).style.display = "none";
+        const preview = document.getElementById("preview_" + i);
+        preview.src = "";
+        preview.style.display = "none";
 
         btn.disabled = false;
         btn.innerText = "📸 Subir otra";
 
       } catch {
-        toast("Error", "error");
+        toast("Error al subir", "#e74c3c");
         btn.disabled = false;
       }
     };
   });
-
-  actualizarProgreso(diaNombre);
 }
 
-/* =========================
-   REGISTRO
-========================= */
+/* REGISTRO */
 function renderRegistro() {
   const cont = document.getElementById("mainContent");
   document.getElementById("titulo").innerText = "Registro";
   cont.innerHTML = "";
 
-  data.evidencias.slice(0, 20).forEach(e => {
+  data.evidencias.forEach(e => {
     const d = document.createElement("div");
     d.className = "card";
 
@@ -271,16 +216,14 @@ function renderRegistro() {
       <b>${e.tarea}</b><br>
       ${e.responsable}<br>
       <small>${e.fecha}</small>
-      ${e.img ? `<img style="max-height:200px;object-fit:cover" src="data:image/jpeg;base64,${e.img}" />` : ""}
+      ${e.img ? `<img src="data:image/jpeg;base64,${e.img}" />` : ""}
     `;
 
     cont.appendChild(d);
   });
 }
 
-/* =========================
-   NAV
-========================= */
+/* NAV */
 function cargarVista(v, el) {
   document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
   if (el) el.classList.add("active");
@@ -291,18 +234,11 @@ function cargarVista(v, el) {
   document.getElementById("sidebar").classList.remove("open");
 }
 
-/* =========================
-   INIT
-========================= */
+/* INIT */
 window.onload = () => {
   if (localStorage.getItem("theme") === "dark") {
     document.documentElement.setAttribute("data-theme", "dark");
   }
 
   cargarVista("hoy");
-
-  setInterval(() => {
-    const hora = document.getElementById("hora");
-    if (hora) hora.innerText = new Date().toLocaleTimeString();
-  }, 1000);
 };
