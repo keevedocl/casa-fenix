@@ -22,7 +22,7 @@ function guardar() {
 }
 
 /* =========================
-   NUEVO: PROGRESO
+   PROGRESO
 ========================= */
 function actualizarProgreso(dia) {
   const tareas = data.tareas[dia];
@@ -64,7 +64,7 @@ function toggleDarkMode() {
 }
 
 /* =========================
-   TOAST MEJORADO
+   TOAST
 ========================= */
 function toast(msg, tipo = "ok") {
   const colores = {
@@ -118,6 +118,9 @@ async function comprimirImagen(file) {
   });
 }
 
+/* =========================
+   PREVIEW CONTROLADO
+========================= */
 function previewImagen(input, id) {
   const file = input.files[0];
   if (!file) return;
@@ -127,6 +130,10 @@ function previewImagen(input, id) {
     const img = document.getElementById("preview_" + id);
     img.src = e.target.result;
     img.style.display = "block";
+
+    // 🔥 CONTROL TAMAÑO (evita zoom loco)
+    img.style.maxHeight = "250px";
+    img.style.objectFit = "cover";
   };
   reader.readAsDataURL(file);
 }
@@ -153,8 +160,8 @@ function renderHoy() {
     guardar();
   }
 
-  /* 🔥 ALERTA */
   const pendientes = data.tareas[diaNombre].filter(t => t.estado !== "hecho").length;
+
   const alerta = document.createElement("div");
   alerta.className = "card";
   alerta.innerHTML = pendientes > 0
@@ -231,6 +238,13 @@ function renderHoy() {
         btn.innerText = "✅ Enviado";
         toast("Subido 🚀");
 
+        // 🔥 CLAVE: permitir subir otra
+        fileInput.value = "";
+        document.getElementById("preview_" + i).style.display = "none";
+
+        btn.disabled = false;
+        btn.innerText = "📸 Subir otra";
+
       } catch {
         toast("Error", "error");
         btn.disabled = false;
@@ -242,7 +256,7 @@ function renderHoy() {
 }
 
 /* =========================
-   REGISTRO CON IMG
+   REGISTRO
 ========================= */
 function renderRegistro() {
   const cont = document.getElementById("mainContent");
@@ -257,7 +271,7 @@ function renderRegistro() {
       <b>${e.tarea}</b><br>
       ${e.responsable}<br>
       <small>${e.fecha}</small>
-      ${e.img ? `<img src="data:image/jpeg;base64,${e.img}" />` : ""}
+      ${e.img ? `<img style="max-height:200px;object-fit:cover" src="data:image/jpeg;base64,${e.img}" />` : ""}
     `;
 
     cont.appendChild(d);
