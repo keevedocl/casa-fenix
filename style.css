@@ -51,15 +51,17 @@ body {
   flex-direction: column;
 }
 
+/* 🔥 LOGO CORREGIDO */
 .logo {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   border-radius: 12px;
   display: block;
   margin: 0 auto 15px;
   object-fit: cover;
 }
 
+/* MENÚ */
 .menu-item {
   padding: 12px;
   margin-top: 10px;
@@ -147,7 +149,7 @@ select {
   border: 1px solid var(--border);
   margin-top: 8px;
   margin-bottom: 12px;
-  font-size: 16px; /* evita zoom en iPhone */
+  font-size: 16px;
   background: var(--card);
   color: var(--text);
 }
@@ -188,7 +190,7 @@ img {
     flex-direction: column;
   }
 
-  /* 🔥 Sidebar → barra inferior tipo app */
+  /* 🔥 barra inferior */
   .sidebar {
     position: fixed;
     bottom: 0;
@@ -209,8 +211,9 @@ img {
     display: none;
   }
 
+  /* 🔥 ocultar logo en celular */
   .logo {
-    display: none;
+    display: none !important;
   }
 
   .menu-item {
@@ -235,18 +238,4 @@ img {
   .checklist {
     font-size: 0.9em;
   }
-   /* 🔥 AJUSTE LOGO */
-.logo {
-  width: 60px;
-  height: 60px;
 }
-
-/* 📱 En celular más pequeño o oculto */
-@media (max-width: 600px) {
-  .logo {
-    width: 40px;
-    height: 40px;
-    margin: 0 auto;
-  }
-}
-
