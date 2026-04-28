@@ -20,6 +20,11 @@ let data = JSON.parse(localStorage.getItem("app")) || { tareas: {}, evidencias: 
 function guardar() {
   localStorage.setItem("app", JSON.stringify(data));
 }
+//Aquiiiiiiiiiiiiiiiiiiiiiiii
+function toggleMenu() {
+  const menu = document.getElementById("sidebar");
+  menu.classList.toggle("open");
+}
 
 // 🔥 NOTIFICACIONES BONITAS
 function toast(msg, color = "#2ecc71") {
