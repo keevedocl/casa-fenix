@@ -169,3 +169,24 @@ button {
     box-shadow: var(--shadow);
   }
 }
+.progreso-box {
+  background: var(--card);
+  padding: 12px;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+.barra {
+  width: 100%;
+  height: 8px;
+  background: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#barraProgreso {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #6C9EFF, #2ecc71);
+  transition: 0.3s;
+}
