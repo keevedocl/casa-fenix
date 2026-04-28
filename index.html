@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Casa Fénix</title>
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-    <meta name="theme-color" content="#6C9EFF">
-    <link rel="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Casa Fénix</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#6C9EFF">
+  <link rel="icon" href="logo.png">
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
+<!-- 🔥 MENÚ -->
 <div class="sidebar" id="sidebar">
-  <img src="tu-logo.png" class="logo">
-  
+  <img src="logo.png" class="logo">
+
   <div class="menu-item active" onclick="cargarVista('hoy', this)">🏠 Hoy</div>
   <div class="menu-item" onclick="cargarVista('evidencias', this)">📸 Registro</div>
+  <div class="menu-item" onclick="cargarVista('insumos', this)">🧼 Insumos</div>
+  <div class="menu-item" onclick="toggleDarkMode()">🌙 Modo oscuro</div>
 </div>
 
+<!-- 🔥 BOTÓN FLOTANTE -->
+<div id="menuBtn" onclick="toggleMenu()">☰</div>
+
+<!-- 🔥 CONTENIDO -->
 <div class="main">
-  <div class="header">
-    <h1 id="titulo">Gestión de Aseo</h1>
-    <div id="hora"></div>
-  </div>
+  <h1 id="titulo">Hoy</h1>
+  <div id="hora"></div>
   <div id="mainContent"></div>
 </div>
 
 <script src="app.js"></script>
-    <div id="menuBtn" onclick="toggleMenu()">☰</div>
 </body>
 </html>
