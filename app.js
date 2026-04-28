@@ -29,31 +29,41 @@ function toggleMenu() {
 }
 
 /* =========================
-   DARK MODE
+   DARK MODE (MEJORADO)
 ========================= */
 function toggleDarkMode() {
   const html = document.documentElement;
+  const isDark = html.getAttribute("data-theme") === "dark";
 
-  if (html.getAttribute("data-theme") === "dark") {
+  if (isDark) {
     html.removeAttribute("data-theme");
     localStorage.setItem("theme", "light");
+    toast("☀️ Modo claro activado", "#3498db");
   } else {
     html.setAttribute("data-theme", "dark");
     localStorage.setItem("theme", "dark");
+    toast("🌙 Modo oscuro activado", "#2c3e50");
   }
 }
 
 /* =========================
-   TOAST
+   TOAST BONITO
 ========================= */
 function toast(msg, color = "#2ecc71") {
   const t = document.createElement("div");
   t.innerText = msg;
   t.style = `
-    position:fixed; bottom:20px; right:20px;
-    background:${color}; color:white;
-    padding:12px 18px; border-radius:10px;
-    z-index:999; font-weight:bold;
+    position:fixed;
+    bottom:25px;
+    right:20px;
+    background:${color};
+    color:white;
+    padding:14px 20px;
+    border-radius:12px;
+    z-index:9999;
+    font-weight:bold;
+    box-shadow:0 5px 20px rgba(0,0,0,0.2);
+    animation:fadeIn 0.3s ease;
   `;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 3000);
@@ -73,20 +83,20 @@ async function comprimirImagen(file) {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        const size = 400;
+        const size = 500;
         canvas.width = size;
         canvas.height = (img.height * size) / img.width;
 
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        resolve(canvas.toDataURL("image/jpeg", 0.5).split(",")[1]);
+        resolve(canvas.toDataURL("image/jpeg", 0.6).split(",")[1]);
       };
     };
   });
 }
 
 /* =========================
-   PREVIEW IMG
+   PREVIEW IMG MEJORADO
 ========================= */
 function previewImagen(input, id) {
   const file = input.files[0];
@@ -94,7 +104,9 @@ function previewImagen(input, id) {
 
   const reader = new FileReader();
   reader.onload = (e) => {
-    document.getElementById("preview_" + id).src = e.target.result;
+    const img = document.getElementById("preview_" + id);
+    img.src = e.target.result;
+    img.style.display = "block";
   };
   reader.readAsDataURL(file);
 }
@@ -129,10 +141,11 @@ function renderHoy() {
       <h3>${t.nombre}</h3>
       <div class="checklist">${detallesAseo[t.nombre]}</div>
 
+      <label>Responsable</label>
       <select id="sel_${i}"></select>
 
       <input type="file" id="f_${i}" accept="image/*">
-      <img id="preview_${i}" style="width:100%; margin-top:10px; border-radius:10px;"/>
+      <img id="preview_${i}" style="display:none; width:100%; margin-top:10px; border-radius:10px;"/>
 
       <button id="btn_${i}" class="btn-confirmar"></button>
     `;
@@ -157,7 +170,7 @@ function renderHoy() {
     fileInput.onchange = () => previewImagen(fileInput, i);
 
     const btn = document.getElementById("btn_" + i);
-    btn.innerText = t.estado === "hecho" ? "✅ Enviado" : "🚀 Enviar";
+    btn.innerText = t.estado === "hecho" ? "✅ Enviado" : "🚀 Enviar evidencia";
 
     btn.onclick = async () => {
       const file = fileInput.files[0];
@@ -193,7 +206,6 @@ function renderHoy() {
         toast("Evidencia subida 🚀");
 
       } catch (err) {
-        console.error(err);
         toast("Error al subir", "#e74c3c");
         btn.disabled = false;
         btn.innerText = "Reintentar";
@@ -262,7 +274,7 @@ function renderRegistro() {
 }
 
 /* =========================
-   NAVEGACION
+   NAV
 ========================= */
 function cargarVista(v, el) {
   document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
@@ -280,7 +292,6 @@ function cargarVista(v, el) {
 ========================= */
 window.onload = () => {
 
-  // restaurar modo oscuro
   const theme = localStorage.getItem("theme");
   if (theme === "dark") {
     document.documentElement.setAttribute("data-theme", "dark");
