@@ -1,47 +1,71 @@
+/* =========================
+   VARIABLES
+========================= */
 :root {
   --bg: #f5f6fa;
-  --card: #fff;
+  --card: #ffffff;
   --text: #2f3640;
   --accent: #6C9EFF;
+  --shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
+/* 🔥 DARK MODE REAL */
 [data-theme="dark"] {
   --bg: #1e272e;
   --card: #2f3640;
   --text: #f5f6fa;
+  --shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
+/* =========================
+   RESET
+========================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* =========================
+   BODY
+========================= */
 body {
-  font-family: Arial;
+  font-family: 'Inter', Arial;
   background: var(--bg);
   color: var(--text);
   display: flex;
+  transition: background 0.3s, color 0.3s;
 }
 
-/* MENU */
+/* =========================
+   MENU
+========================= */
 .sidebar {
   width: 220px;
   background: var(--card);
   padding: 15px;
+  box-shadow: var(--shadow);
+  transition: 0.3s;
 }
 
+/* 🔥 LOGO */
 .logo {
-  width: 60px;
+  width: 50px;
   display: block;
-  margin: auto;
+  margin: 0 auto 10px;
 }
 
+/* MENU ITEMS */
 .menu-item {
   padding: 12px;
   margin-top: 10px;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 10px;
+  transition: 0.2s;
+}
+
+.menu-item:hover {
+  background: rgba(0,0,0,0.05);
 }
 
 .active {
@@ -49,31 +73,69 @@ body {
   color: white;
 }
 
-/* MAIN */
+/* =========================
+   MAIN
+========================= */
 .main {
   flex: 1;
   padding: 20px;
+  max-width: 700px;
+  margin: auto;
 }
 
-/* CARDS */
+/* =========================
+   CARDS
+========================= */
 .card, .tarea {
   background: var(--card);
-  padding: 15px;
-  border-radius: 10px;
+  padding: 18px;
+  border-radius: 14px;
   margin-top: 15px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
 }
 
-/* BUTTON */
-.btn-confirmar {
-  background: #28a745;
-  color: white;
+.card:hover, .tarea:hover {
+  transform: translateY(-2px);
+}
+
+/* =========================
+   INPUTS
+========================= */
+input, select {
   width: 100%;
   padding: 12px;
-  border: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-top: 8px;
+  margin-bottom: 12px;
 }
 
-/* MOBILE */
+/* =========================
+   BUTTON
+========================= */
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-confirmar {
+  background: linear-gradient(135deg, #28a745, #2ecc71);
+  color: white;
+  width: 100%;
+  transition: 0.2s;
+}
+
+.btn-confirmar:hover {
+  transform: scale(1.03);
+}
+
+/* =========================
+   MOBILE
+========================= */
 @media (max-width: 600px) {
 
   body {
@@ -84,7 +146,7 @@ body {
     position: fixed;
     bottom: -100%;
     width: 100%;
-    transition: 0.3s;
+    border-radius: 20px 20px 0 0;
   }
 
   .sidebar.open {
@@ -104,5 +166,6 @@ body {
     justify-content: center;
     align-items: center;
     font-size: 24px;
+    box-shadow: var(--shadow);
   }
 }
