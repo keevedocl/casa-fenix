@@ -235,4 +235,18 @@ img {
   .checklist {
     font-size: 0.9em;
   }
+   /* 🔥 AJUSTE LOGO */
+.logo {
+  width: 60px;
+  height: 60px;
 }
+
+/* 📱 En celular más pequeño o oculto */
+@media (max-width: 600px) {
+  .logo {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+  }
+}
+
