@@ -1,78 +1,47 @@
-/* =========================
-   VARIABLES / TEMAS
-========================= */
 :root {
   --bg: #f5f6fa;
-  --card: #ffffff;
+  --card: #fff;
   --text: #2f3640;
   --accent: #6C9EFF;
-  --border: #e5e7eb;
-  --shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 [data-theme="dark"] {
   --bg: #1e272e;
   --card: #2f3640;
   --text: #f5f6fa;
-  --border: #3d4a54;
-  --shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
 
-/* =========================
-   RESET
-========================= */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-/* =========================
-   BODY
-========================= */
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  font-family: Arial;
   background: var(--bg);
   color: var(--text);
-  min-height: 100vh;
   display: flex;
-  transition: 0.3s;
 }
 
-/* =========================
-   SIDEBAR (DESKTOP)
-========================= */
+/* MENU */
 .sidebar {
   width: 220px;
   background: var(--card);
   padding: 15px;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
 }
 
-/* 🔥 LOGO CORREGIDO */
 .logo {
   width: 60px;
-  height: 60px;
-  border-radius: 12px;
   display: block;
-  margin: 0 auto 15px;
-  object-fit: cover;
+  margin: auto;
 }
 
-/* MENÚ */
 .menu-item {
   padding: 12px;
   margin-top: 10px;
-  border-radius: 10px;
   cursor: pointer;
-  transition: 0.2s;
-  text-align: left;
-}
-
-.menu-item:hover {
-  background: rgba(0,0,0,0.05);
+  border-radius: 8px;
 }
 
 .active {
@@ -80,215 +49,60 @@ body {
   color: white;
 }
 
-/* =========================
-   MAIN
-========================= */
+/* MAIN */
 .main {
   flex: 1;
   padding: 20px;
-  width: 100%;
-  max-width: 700px;
-  margin: auto;
 }
 
-/* =========================
-   TARJETAS
-========================= */
-.tarea,
-.card {
+/* CARDS */
+.card, .tarea {
   background: var(--card);
-  padding: 20px;
-  border-radius: 14px;
+  padding: 15px;
+  border-radius: 10px;
   margin-top: 15px;
-  box-shadow: var(--shadow);
-  transition: 0.2s;
 }
 
-/* =========================
-   CHECKLIST
-========================= */
-.checklist {
-  font-size: 0.9em;
-  background: rgba(0,0,0,0.03);
-  padding: 10px;
-  border-radius: 8px;
-  margin: 10px 0;
-  border-left: 4px solid var(--accent);
-}
-
-/* =========================
-   TEXTOS
-========================= */
-.cambio {
-  color: #e67e22;
-  font-size: 0.8em;
-  font-weight: bold;
-  display: block;
-}
-
-.advertencia {
-  color: #c0392b;
-  font-size: 0.8em;
-  font-weight: bold;
-}
-
-.alerta {
-  color: #d35400;
-  font-size: 0.85em;
-  font-style: italic;
-}
-
-/* =========================
-   INPUTS
-========================= */
-input,
-select {
-  width: 100%;
-  padding: 14px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  margin-top: 8px;
-  margin-bottom: 12px;
-  font-size: 16px;
-  background: var(--card);
-  color: var(--text);
-}
-
-/* =========================
-   BOTONES
-========================= */
-button {
-  border: none;
-  border-radius: 10px;
-  padding: 14px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
+/* BUTTON */
 .btn-confirmar {
   background: #28a745;
   color: white;
   width: 100%;
-  margin-top: 10px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
 }
 
-/* =========================
-   IMÁGENES
-========================= */
-img {
-  width: 100%;
-  border-radius: 10px;
-  margin-top: 10px;
-}
-
-/* =========================
-   MOBILE (APP REAL)
-========================= */
+/* MOBILE */
 @media (max-width: 600px) {
 
   body {
     flex-direction: column;
   }
 
-  /* 🔥 barra inferior */
-  .sidebar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 70px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    padding: 5px;
-    border-top: 1px solid var(--border);
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-    z-index: 1000;
-  }
-
-  .sidebar h2 {
-    display: none;
-  }
-
-  /* 🔥 ocultar logo en celular */
-  .logo {
-    display: none !important;
-  }
-
-  .menu-item {
-    flex: 1;
-    text-align: center;
-    font-size: 12px;
-    padding: 6px;
-  }
-
-  /* espacio para barra inferior */
-  .main {
-    padding: 15px;
-    padding-bottom: 90px;
-  }
-
-  /* tarjetas más compactas */
-  .tarea,
-  .card {
-    padding: 15px;
-  }
-
-  .checklist {
-    font-size: 0.9em;
-  }
-}
-/* 🔥 BOTÓN FLOTANTE */
-#menuBtn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: var(--accent);
-  color: white;
-  font-size: 24px;
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  z-index: 2000;
-}
-
-/* 📱 MENÚ OCULTO */
-@media (max-width: 600px) {
-
   .sidebar {
     position: fixed;
     bottom: -100%;
-    left: 0;
     width: 100%;
-    background: var(--card);
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border-radius: 20px 20px 0 0;
     transition: 0.3s;
-    z-index: 1500;
   }
 
-  /* 🔥 cuando se abre */
   .sidebar.open {
     bottom: 0;
   }
 
-  .menu-item {
-    width: 100%;
-    text-align: center;
-    font-size: 16px;
-    margin: 5px 0;
-  }
-
-  /* ya no necesitamos espacio abajo */
-  .main {
-    padding-bottom: 20px;
+  #menuBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--accent);
+    color: white;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
   }
 }
