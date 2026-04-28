@@ -20,13 +20,32 @@ let data = JSON.parse(localStorage.getItem("app")) || { tareas: {}, evidencias: 
 function guardar() {
   localStorage.setItem("app", JSON.stringify(data));
 }
-//Aquiiiiiiiiiiiiiiiiiiiiiiii
+
+/* =========================
+   MENU
+========================= */
 function toggleMenu() {
-  const menu = document.getElementById("sidebar");
-  menu.classList.toggle("open");
+  document.getElementById("sidebar").classList.toggle("open");
 }
 
-// 🔥 NOTIFICACIONES BONITAS
+/* =========================
+   DARK MODE
+========================= */
+function toggleDarkMode() {
+  const html = document.documentElement;
+
+  if (html.getAttribute("data-theme") === "dark") {
+    html.removeAttribute("data-theme");
+    localStorage.setItem("theme", "light");
+  } else {
+    html.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+  }
+}
+
+/* =========================
+   TOAST
+========================= */
 function toast(msg, color = "#2ecc71") {
   const t = document.createElement("div");
   t.innerText = msg;
@@ -40,7 +59,9 @@ function toast(msg, color = "#2ecc71") {
   setTimeout(() => t.remove(), 3000);
 }
 
-// 🔥 COMPRESIÓN MEJORADA
+/* =========================
+   COMPRESION IMG
+========================= */
 async function comprimirImagen(file) {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -58,13 +79,15 @@ async function comprimirImagen(file) {
 
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        resolve(canvas.toDataURL("image/jpeg", 0.4).split(",")[1]);
+        resolve(canvas.toDataURL("image/jpeg", 0.5).split(",")[1]);
       };
     };
   });
 }
 
-// 🔥 PREVIEW IMAGEN
+/* =========================
+   PREVIEW IMG
+========================= */
 function previewImagen(input, id) {
   const file = input.files[0];
   if (!file) return;
@@ -76,6 +99,9 @@ function previewImagen(input, id) {
   reader.readAsDataURL(file);
 }
 
+/* =========================
+   HOY
+========================= */
 function renderHoy() {
   const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const diaNombre = dias[new Date().getDay()];
@@ -131,7 +157,6 @@ function renderHoy() {
     fileInput.onchange = () => previewImagen(fileInput, i);
 
     const btn = document.getElementById("btn_" + i);
-
     btn.innerText = t.estado === "hecho" ? "✅ Enviado" : "🚀 Enviar";
 
     btn.onclick = async () => {
@@ -177,7 +202,9 @@ function renderHoy() {
   });
 }
 
-// 🔥 INSUMOS MEJORADO
+/* =========================
+   INSUMOS
+========================= */
 function renderInsumos() {
   const cont = document.getElementById("mainContent");
   document.getElementById("titulo").innerText = "Insumos";
@@ -205,12 +232,6 @@ function addIn() {
   data.insumos.push(v);
   guardar();
   renderInsumos();
-
-  fetch(GOOGLE_URL, {
-    method: "POST",
-    mode: "no-cors",
-    body: new FormData()
-  });
 }
 
 function borrarInsumo(i) {
@@ -219,7 +240,9 @@ function borrarInsumo(i) {
   renderInsumos();
 }
 
-// 🔥 REGISTRO MEJORADO
+/* =========================
+   REGISTRO
+========================= */
 function renderRegistro() {
   const cont = document.getElementById("mainContent");
   document.getElementById("titulo").innerText = "Registro";
@@ -238,6 +261,9 @@ function renderRegistro() {
   });
 }
 
+/* =========================
+   NAVEGACION
+========================= */
 function cargarVista(v, el) {
   document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
   if (el) el.classList.add("active");
@@ -245,13 +271,25 @@ function cargarVista(v, el) {
   if (v === "hoy") renderHoy();
   if (v === "insumos") renderInsumos();
   if (v === "evidencias") renderRegistro();
+
+  document.getElementById("sidebar").classList.remove("open");
 }
 
-// 🔥 INIT
+/* =========================
+   INIT
+========================= */
 window.onload = () => {
+
+  // restaurar modo oscuro
+  const theme = localStorage.getItem("theme");
+  if (theme === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+
   cargarVista("hoy");
 
   setInterval(() => {
-    document.getElementById("hora").innerText = new Date().toLocaleTimeString();
+    const hora = document.getElementById("hora");
+    if (hora) hora.innerText = new Date().toLocaleTimeString();
   }, 1000);
 };
