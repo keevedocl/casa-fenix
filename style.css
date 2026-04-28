@@ -1,104 +1,24 @@
-body { 
-    margin: 0; 
-    font-family: 'Inter', sans-serif; 
-    display: flex; 
-    background: #f5f6fa; 
-    min-height: 100vh;
-}
+:root { --bg: #f5f6fa; --card: white; --text: #2f3640; --accent: #6C9EFF; }
+[data-theme="dark"] { --bg: #1e272e; --card: #2f3640; --text: #f5f6fa; }
 
-.sidebar { 
-    width: 220px; 
-    background: white; 
-    padding: 15px; 
-    height: 100vh; 
-    box-shadow: 2px 0 10px rgba(0,0,0,0.05); 
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0; /* Evita que el sidebar se achique */
-}
-
-/* Ajustes del Logo */
-.logo { 
-    width: 80px; 
-    height: 80px; /* Definir alto ayuda a que no desaparezca */
-    border-radius: 12px; 
-    margin-bottom: 15px; 
-    object-fit: cover; /* Mantiene la proporción de la imagen */
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.menu-item { 
-    padding: 12px; 
-    margin-top: 10px; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    transition: 0.3s;
-}
-
-.active { background: #6C9EFF; color: white; }
-
+body { margin: 0; font-family: 'Inter', sans-serif; display: flex; background: var(--bg); color: var(--text); min-height: 100vh; transition: 0.3s; }
+.sidebar { width: 220px; background: var(--card); padding: 15px; box-shadow: 2px 0 10px rgba(0,0,0,0.05); }
+.logo { width: 80px; height: 80px; border-radius: 12px; display: block; margin: 0 auto 15px; object-fit: cover; }
+.menu-item { padding: 12px; margin-top: 10px; border-radius: 8px; cursor: pointer; }
+.active { background: var(--accent); color: white; }
 .main { flex: 1; padding: 20px; }
+.tarea, .card { background: var(--card); padding: 20px; border-radius: 12px; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 
-.tarea { 
-    background: white; 
-    padding: 20px; 
-    border-radius: 12px; 
-    margin-top: 15px; 
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-}
+/* Estilos específicos de gestión */
+.checklist { font-size: 0.85em; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 8px; margin: 10px 0; border-left: 4px solid var(--accent); }
+.cambio { color: #e67e22; font-size: 0.8em; font-weight: bold; display: block; }
+.advertencia { color: #c0392b; font-size: 0.8em; font-weight: bold; }
+.alerta { color: #d35400; font-size: 0.85em; font-style: italic; }
 
-/* Botón de confirmación mejorado para celular */
-.btn-confirmar { 
-    background: #28a745; 
-    color: white; 
-    border: none; 
-    padding: 14px; 
-    border-radius: 8px; 
-    width: 100%; 
-    margin-top: 12px; 
-    font-weight: bold; 
-    cursor: pointer; 
-    font-size: 16px;
-}
+.btn-confirmar { background: #28a745; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: bold; }
 
-/* --- DISEÑO PARA CELULAR --- */
 @media (max-width: 600px) {
     body { flex-direction: column; }
-    
-    .sidebar { 
-        width: 100%; 
-        height: auto; 
-        padding: 10px;
-        flex-direction: row; /* Elementos uno al lado del otro */
-        align-items: center;
-        overflow-x: auto; 
-        position: sticky; 
-        top: 0; 
-        z-index: 1000;
-        box-sizing: border-box;
-    }
-
-    .logo { 
-        width: 50px; /* Más pequeño en celular para que quepa en la barra */
-        height: 50px;
-        margin-bottom: 0; 
-        margin-right: 15px; 
-    }
-
+    .sidebar { width: 100%; height: auto; flex-direction: row; display: flex; overflow-x: auto; position: sticky; top: 0; z-index: 10; }
     .sidebar h2 { display: none; }
-
-    .menu {
-        display: flex;
-        gap: 10px;
-    }
-
-    .menu-item {
-        margin-top: 0;
-        padding: 8px 15px;
-        white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
-    }
-
-    .main { padding: 15px; }
 }
