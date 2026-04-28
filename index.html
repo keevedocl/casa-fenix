@@ -15,14 +15,12 @@
 </head>
 <body>
 
-<div class="sidebar">
-  <img src="logo.png" class="logo">
-  <h2>Casa Fénix</h2>
-  <div class="menu">
-    <div class="menu-item active" onclick="cargarVista('hoy', this)">🏠 Hoy</div>
-    <div class="menu-item" onclick="cargarVista('evidencias', this)">📸 Registro</div>
-    <div class="menu-item" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')">🌓 Tema</div>
-  </div>
+<div class="sidebar" id="sidebar">
+  <img src="tu-logo.png" class="logo">
+  
+  <div class="menu-item active" onclick="cargarVista('hoy', this)">🏠 Hoy</div>
+  <div class="menu-item" onclick="cargarVista('evidencias', this)">📸 Registro</div>
+  <div class="menu-item" onclick="cargarVista('insumos', this)">🧼 Insumos</div>
 </div>
 
 <div class="main">
