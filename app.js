@@ -22,6 +22,23 @@ function guardar() {
 }
 
 /* =========================
+   NUEVO: PROGRESO
+========================= */
+function actualizarProgreso(dia) {
+  const tareas = data.tareas[dia];
+  if (!tareas) return;
+
+  const total = tareas.length;
+  const hechas = tareas.filter(t => t.estado === "hecho").length;
+  const porcentaje = Math.round((hechas / total) * 100);
+
+  document.getElementById("progresoTexto").innerText =
+    `${porcentaje}% completado (${hechas}/${total})`;
+
+  document.getElementById("barraProgreso").style.width = porcentaje + "%";
+}
+
+/* =========================
    MENU
 ========================= */
 function toggleMenu() {
@@ -29,7 +46,7 @@ function toggleMenu() {
 }
 
 /* =========================
-   DARK MODE (MEJORADO)
+   DARK MODE
 ========================= */
 function toggleDarkMode() {
   const html = document.documentElement;
@@ -38,33 +55,39 @@ function toggleDarkMode() {
   if (isDark) {
     html.removeAttribute("data-theme");
     localStorage.setItem("theme", "light");
-    toast("☀️ Modo claro activado", "#3498db");
+    toast("☀️ Modo claro");
   } else {
     html.setAttribute("data-theme", "dark");
     localStorage.setItem("theme", "dark");
-    toast("🌙 Modo oscuro activado", "#2c3e50");
+    toast("🌙 Modo oscuro");
   }
 }
 
 /* =========================
-   TOAST BONITO
+   TOAST MEJORADO
 ========================= */
-function toast(msg, color = "#2ecc71") {
+function toast(msg, tipo = "ok") {
+  const colores = {
+    ok: "#2ecc71",
+    error: "#e74c3c",
+    warn: "#f39c12"
+  };
+
   const t = document.createElement("div");
   t.innerText = msg;
   t.style = `
     position:fixed;
-    bottom:25px;
-    right:20px;
-    background:${color};
+    bottom:30px;
+    left:50%;
+    transform:translateX(-50%);
+    background:${colores[tipo]};
     color:white;
     padding:14px 20px;
     border-radius:12px;
-    z-index:9999;
+    z-index:999;
     font-weight:bold;
-    box-shadow:0 5px 20px rgba(0,0,0,0.2);
-    animation:fadeIn 0.3s ease;
   `;
+
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 3000);
 }
@@ -95,9 +118,6 @@ async function comprimirImagen(file) {
   });
 }
 
-/* =========================
-   PREVIEW IMG MEJORADO
-========================= */
 function previewImagen(input, id) {
   const file = input.files[0];
   if (!file) return;
@@ -133,6 +153,15 @@ function renderHoy() {
     guardar();
   }
 
+  /* 🔥 ALERTA */
+  const pendientes = data.tareas[diaNombre].filter(t => t.estado !== "hecho").length;
+  const alerta = document.createElement("div");
+  alerta.className = "card";
+  alerta.innerHTML = pendientes > 0
+    ? `⚠️ Te faltan ${pendientes} tareas`
+    : `✅ Todo listo`;
+  cont.appendChild(alerta);
+
   data.tareas[diaNombre].forEach((t, i) => {
     const div = document.createElement("div");
     div.className = "tarea";
@@ -141,11 +170,10 @@ function renderHoy() {
       <h3>${t.nombre}</h3>
       <div class="checklist">${detallesAseo[t.nombre]}</div>
 
-      <label>Responsable</label>
       <select id="sel_${i}"></select>
 
       <input type="file" id="f_${i}" accept="image/*">
-      <img id="preview_${i}" style="display:none; width:100%; margin-top:10px; border-radius:10px;"/>
+      <img id="preview_${i}" style="display:none"/>
 
       <button id="btn_${i}" class="btn-confirmar"></button>
     `;
@@ -161,20 +189,15 @@ function renderHoy() {
       select.appendChild(op);
     });
 
-    select.onchange = () => {
-      t.responsable = select.value;
-      guardar();
-    };
-
     const fileInput = document.getElementById("f_" + i);
     fileInput.onchange = () => previewImagen(fileInput, i);
 
     const btn = document.getElementById("btn_" + i);
-    btn.innerText = t.estado === "hecho" ? "✅ Enviado" : "🚀 Enviar evidencia";
+    btn.innerText = t.estado === "hecho" ? "✅ Enviado" : "🚀 Enviar";
 
     btn.onclick = async () => {
       const file = fileInput.files[0];
-      if (!file) return toast("Sube una imagen", "#e74c3c");
+      if (!file) return toast("Sube una imagen", "error");
 
       btn.innerText = "⏳ Subiendo...";
       btn.disabled = true;
@@ -182,93 +205,61 @@ function renderHoy() {
       try {
         const img64 = await comprimirImagen(file);
 
-        const fd = new FormData();
-        fd.append("dia", diaNombre);
-        fd.append("tarea", t.nombre);
-        fd.append("responsable", t.responsable);
-        fd.append("img", img64);
-
         fetch(GOOGLE_URL, {
           method: "POST",
           mode: "no-cors",
-          body: fd
+          body: JSON.stringify({
+            dia: diaNombre,
+            tarea: t.nombre,
+            responsable: t.responsable,
+            img: img64
+          })
         });
 
         t.estado = "hecho";
+
         data.evidencias.unshift({
           tarea: t.nombre,
           responsable: t.responsable,
-          fecha: new Date().toLocaleString()
+          fecha: new Date().toLocaleString(),
+          img: img64
         });
+
         guardar();
+        actualizarProgreso(diaNombre);
 
         btn.innerText = "✅ Enviado";
-        toast("Evidencia subida 🚀");
+        toast("Subido 🚀");
 
-      } catch (err) {
-        toast("Error al subir", "#e74c3c");
+      } catch {
+        toast("Error", "error");
         btn.disabled = false;
-        btn.innerText = "Reintentar";
       }
     };
   });
+
+  actualizarProgreso(diaNombre);
 }
 
 /* =========================
-   INSUMOS
-========================= */
-function renderInsumos() {
-  const cont = document.getElementById("mainContent");
-  document.getElementById("titulo").innerText = "Insumos";
-
-  cont.innerHTML = `
-    <div class="card">
-      <input id="insI" placeholder="Nuevo insumo">
-      <button onclick="addIn()">Agregar</button>
-    </div>
-    <div id="listI"></div>
-  `;
-
-  data.insumos.forEach((i, idx) => {
-    const d = document.createElement("div");
-    d.className = "card";
-    d.innerHTML = `${i} <button onclick="borrarInsumo(${idx})">❌</button>`;
-    document.getElementById("listI").appendChild(d);
-  });
-}
-
-function addIn() {
-  const v = document.getElementById("insI").value.trim();
-  if (!v) return;
-
-  data.insumos.push(v);
-  guardar();
-  renderInsumos();
-}
-
-function borrarInsumo(i) {
-  data.insumos.splice(i, 1);
-  guardar();
-  renderInsumos();
-}
-
-/* =========================
-   REGISTRO
+   REGISTRO CON IMG
 ========================= */
 function renderRegistro() {
   const cont = document.getElementById("mainContent");
   document.getElementById("titulo").innerText = "Registro";
-
   cont.innerHTML = "";
 
   data.evidencias.slice(0, 20).forEach(e => {
     const d = document.createElement("div");
     d.className = "card";
+
     d.innerHTML = `
       <b>${e.tarea}</b><br>
       ${e.responsable}<br>
       <small>${e.fecha}</small>
+      ${e.img ? `<img src="data:image/jpeg;base64,${e.img}" />` : ""}
     `;
+
     cont.appendChild(d);
   });
 }
@@ -281,7 +272,6 @@ function cargarVista(v, el) {
   if (el) el.classList.add("active");
 
   if (v === "hoy") renderHoy();
-  if (v === "insumos") renderInsumos();
   if (v === "evidencias") renderRegistro();
 
   document.getElementById("sidebar").classList.remove("open");
@@ -291,9 +281,7 @@ function cargarVista(v, el) {
    INIT
 ========================= */
 window.onload = () => {
-
-  const theme = localStorage.getItem("theme");
-  if (theme === "dark") {
+  if (localStorage.getItem("theme") === "dark") {
     document.documentElement.setAttribute("data-theme", "dark");
   }
 
