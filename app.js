@@ -41,7 +41,7 @@ function toggleDarkMode() {
 }
 
 /* TOAST */
-function toast(msg, color = "#2ecc71") {
+function toast(msg) {
   const t = document.createElement("div");
   t.innerText = msg;
   t.style = `
@@ -49,17 +49,17 @@ function toast(msg, color = "#2ecc71") {
     bottom:30px;
     left:50%;
     transform:translateX(-50%);
-    background:${color};
+    background:#2ecc71;
     color:white;
     padding:12px 18px;
     border-radius:10px;
-    z-index:9999;
+    z-index:999;
   `;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 2500);
 }
 
-/* COMPRESION */
+/* COMPRESIÓN MEJORADA */
 async function comprimirImagen(file) {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -71,19 +71,21 @@ async function comprimirImagen(file) {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        const size = 500;
-        canvas.width = size;
-        canvas.height = (img.height * size) / img.width;
+        const maxW = 400;
+        const scale = maxW / img.width;
+
+        canvas.width = maxW;
+        canvas.height = img.height * scale;
 
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        resolve(canvas.toDataURL("image/jpeg", 0.6).split(",")[1]);
+        resolve(canvas.toDataURL("image/jpeg", 0.5).split(",")[1]);
       };
     };
   });
 }
 
-/* PREVIEW */
+/* PREVIEW CONTROLADO */
 function previewImagen(input, id) {
   const file = input.files[0];
   if (!file) return;
@@ -95,6 +97,21 @@ function previewImagen(input, id) {
     img.style.display = "block";
   };
   reader.readAsDataURL(file);
+}
+
+/* PROGRESO */
+function actualizarProgreso(dia) {
+  const tareas = data.tareas[dia];
+  if (!tareas) return;
+
+  const total = tareas.length;
+  const hechas = tareas.filter(t => t.estado === "hecho").length;
+  const porcentaje = Math.round((hechas / total) * 100);
+
+  document.getElementById("progresoTexto").innerText =
+    `${porcentaje}% completado (${hechas}/${total})`;
+
+  document.getElementById("barraProgreso").style.width = porcentaje + "%";
 }
 
 /* HOY */
@@ -112,7 +129,6 @@ function renderHoy() {
   }
 
   if (!data.tareas[diaNombre]) {
-    data.tareas = {};
     data.tareas[diaNombre] = base[diaNombre].map(t => ({ ...t, estado: "pendiente" }));
     guardar();
   }
@@ -128,7 +144,7 @@ function renderHoy() {
       <select id="sel_${i}"></select>
 
       <input type="file" id="f_${i}" accept="image/*">
-      <img id="preview_${i}" style="display:none"/>
+      <img id="preview_${i}" class="preview-img"/>
 
       <button id="btn_${i}" class="btn-confirmar"></button>
     `;
@@ -152,7 +168,7 @@ function renderHoy() {
 
     btn.onclick = async () => {
       const file = fileInput.files[0];
-      if (!file) return toast("Sube una imagen", "#e74c3c");
+      if (!file) return toast("Sube una imagen");
 
       btn.innerText = "⏳ Subiendo...";
       btn.disabled = true;
@@ -160,15 +176,15 @@ function renderHoy() {
       try {
         const img64 = await comprimirImagen(file);
 
-        const fd = new FormData();
-        fd.append("dia", diaNombre);
-        fd.append("tarea", t.nombre);
-        fd.append("responsable", t.responsable);
-        fd.append("img", img64);
-
-        await fetch(GOOGLE_URL, {
+        fetch(GOOGLE_URL, {
           method: "POST",
-          body: fd
+          mode: "no-cors",
+          body: JSON.stringify({
+            dia: diaNombre,
+            tarea: t.nombre,
+            responsable: t.responsable,
+            img: img64
+          })
         });
 
         t.estado = "hecho";
@@ -181,25 +197,23 @@ function renderHoy() {
         });
 
         guardar();
+        actualizarProgreso(diaNombre);
 
         btn.innerText = "✅ Enviado";
         toast("Subido 🚀");
 
-        // RESET
+        /* 🔥 RESET INPUT PARA PODER SUBIR OTRA */
         fileInput.value = "";
-        const preview = document.getElementById("preview_" + i);
-        preview.src = "";
-        preview.style.display = "none";
-
-        btn.disabled = false;
-        btn.innerText = "📸 Subir otra";
+        document.getElementById("preview_" + i).style.display = "none";
 
       } catch {
-        toast("Error al subir", "#e74c3c");
+        toast("Error");
         btn.disabled = false;
       }
     };
   });
+
+  actualizarProgreso(diaNombre);
 }
 
 /* REGISTRO */
@@ -208,7 +222,7 @@ function renderRegistro() {
   document.getElementById("titulo").innerText = "Registro";
   cont.innerHTML = "";
 
-  data.evidencias.forEach(e => {
+  data.evidencias.slice(0, 20).forEach(e => {
     const d = document.createElement("div");
     d.className = "card";
 
@@ -216,7 +230,7 @@ function renderRegistro() {
       <b>${e.tarea}</b><br>
       ${e.responsable}<br>
       <small>${e.fecha}</small>
-      ${e.img ? `<img src="data:image/jpeg;base64,${e.img}" />` : ""}
+      ${e.img ? `<img class="preview-img" src="data:image/jpeg;base64,${e.img}" />` : ""}
     `;
 
     cont.appendChild(d);
@@ -241,4 +255,9 @@ window.onload = () => {
   }
 
   cargarVista("hoy");
+
+  setInterval(() => {
+    const hora = document.getElementById("hora");
+    if (hora) hora.innerText = new Date().toLocaleTimeString();
+  }, 1000);
 };
