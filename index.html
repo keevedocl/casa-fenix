@@ -7,6 +7,10 @@
   <title>Casa Fénix</title>
 
   <link rel="icon" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <meta name="theme-color" content="#6C9EFF">
+  <link rel="manifest" href="manifest.json">
+
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -22,7 +26,7 @@
   <div class="menu-item" onclick="toggleDarkMode()">🌙 Modo oscuro</div>
 </div>
 
-<!-- 🔥 BOTÓN FLOTANTE -->
+<!-- 🔥 BOTÓN -->
 
 <div id="menuBtn" onclick="toggleMenu()">☰</div>
 
@@ -30,7 +34,7 @@
 
 <div class="main">
 
-  <!-- 🔥 HEADER BONITO -->
+  <!-- HEADER -->
 
   <div class="header-box">
     <h1 id="titulo">Hoy</h1>
@@ -44,7 +48,16 @@
     <p>Gestión de aseo del hogar</p>
   </div>
 
-  <!-- 🔥 CONTENIDO DINÁMICO -->
+  <!-- 🔥 PROGRESO (LO QUE TE FALTABA) -->
+
+  <div class="card">
+    <div id="progresoTexto">0% completado</div>
+    <div class="barra-container">
+      <div id="barraProgreso"></div>
+    </div>
+  </div>
+
+  <!-- CONTENIDO DINÁMICO -->
 
   <div id="mainContent"></div>
 
